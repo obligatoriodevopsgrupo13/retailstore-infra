@@ -48,7 +48,7 @@ resource "aws_security_group" "ecs_tasks" {
   }
 }
 
-resource "aws_lb" "alb" {
+resource "aws_lb" "this" {
   name               = "${var.app_name}-alb"
   internal           = false
   load_balancer_type = "application"
@@ -82,7 +82,7 @@ resource "aws_lb_target_group" "target_group" {
 }
 
 resource "aws_lb_listener" "http" {
-  load_balancer_arn = aws_lb.alb.arn
+  load_balancer_arn = aws_lb.this.arn
   port              = 80
   protocol          = "HTTP"
 

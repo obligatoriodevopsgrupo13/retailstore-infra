@@ -25,3 +25,11 @@ output "ecr_repository_urls" {
     service_name => repository.repository_url
   }
 }
+
+output "alb_dns_names" {
+  description = "DNS publicos de los ALBs por microservicio en dev"
+  value = {
+    for service_name, service in module.ecs_service :
+    service_name => service.alb_dns_name
+  }
+}
