@@ -1,0 +1,99 @@
+name: Terraform CI/CD
+
+on:
+  push:
+    branches: ["main", "develop"]
+    paths:
+      - 'environments/**'
+      - 'modules/**'
+  pull_request:
+    branches: ["main", "develop"]
+    paths:
+      - 'environments/**'
+      - 'modules/**'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Entorno a desplegar (dev/test/prod)"
+        required: true
+        default: "dev"
+        type: choice
+        options:
+          - dev
+          - test
+          - prod
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+env:
+  AWS_REGION: us-east-1
+  TF_VERSION: 1.7.0
+
+jobs:
+  deploy:
+    name: Terraform ${{ github.event.inputs.environment || github.ref_name }} CI/CD
+    runs-on: ubuntu-latest
+
+    env:
+      TF_IN_AUTOMATION: true
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+      AWS_REGION: us-east-1
+
+    defaults:
+      run:
+        working-directory: >
+          environments/${{ github.event.inputs.environment
+            || (github.ref_name == 'main' && 'prod')
+            || 'dev' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+        working-directory: .
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -var-file="terraform.tfvars" -out=tfplan
+        continue-on-error: true
+
+      - name: Comment plan on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const output = `### Terraform Plan — \`${{ github.event.inputs.environment || github.ref_name }}\`
+            \`\`\`
+            ${{ steps.plan.outputs.stdout }}
+            \`\`\`
+            *Autor: @${{ github.actor }}, Acción: \`${{ github.event_name }}\`*`;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            });
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+      - name: Terraform Apply
+        if: github.event_name != 'pull_request'
+        run: terraform apply -auto-approve tfplan
