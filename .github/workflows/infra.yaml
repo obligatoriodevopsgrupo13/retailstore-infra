@@ -74,23 +74,6 @@ jobs:
         run: terraform plan -var-file="terraform.tfvars" -out=tfplan
         continue-on-error: true
 
-      - name: Comment plan on PR
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const output = `### Terraform Plan — \`${{ github.event.inputs.environment || github.ref_name }}\`
-            \`\`\`
-            ${{ steps.plan.outputs.stdout }}
-            \`\`\`
-            *Autor: @${{ github.actor }}, Acción: \`${{ github.event_name }}\`*`;
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: output
-            });
-
       - name: Terraform Plan Status
         if: steps.plan.outcome == 'failure'
         run: exit 1
