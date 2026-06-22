@@ -14,3 +14,5 @@ override.tf.json
 secrets.tfvars
 secrets.auto.tfvars
 secrets.auto.tfvars.json
+.aws-sam/
+serverless/events/env.json
