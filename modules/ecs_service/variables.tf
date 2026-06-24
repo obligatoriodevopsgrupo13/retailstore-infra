@@ -33,6 +33,12 @@ variable "image_url" {
   type        = string
 }
 
+variable "image_tag" {
+  description = "Tag de la imagen Docker a desplegar"
+  type        = string
+  default     = "latest"
+}
+
 variable "execution_role_arn" {
   description = "ARN del IAM role usado por ECS para ejecutar la task"
   type        = string
