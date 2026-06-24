@@ -1,0 +1,10 @@
+version = 0.1
+
+[default.deploy.parameters]
+stack_name        = "serverless"
+s3_bucket         = "obligatorio-devops-tfstate-13"
+s3_prefix         = "sam"
+region            = "us-east-1"
+capabilities      = "CAPABILITY_IAM"
+confirm_changeset = false
+parameter_overrides = "Environment=dev ClusterName=retail-cluster-dev"
