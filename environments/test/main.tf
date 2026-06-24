@@ -37,5 +37,6 @@ module "ecs_service" {
   public_subnet_ids  = module.networking.public_subnet_ids
   private_subnet_ids = module.networking.private_subnet_ids
   image_url          = module.ecr[each.key].repository_url
+  image_tag          = var.image_tag
   execution_role_arn = data.aws_iam_role.labrole.arn
 }

@@ -113,7 +113,7 @@ resource "aws_ecs_task_definition" "task" {
   container_definitions = jsonencode([
     {
       name        = var.app_name
-      image       = var.image_url
+      image       = "${var.image_url}:${var.image_tag}"
       essential   = true
       environment = var.environment_variables
       secrets     = var.secrets

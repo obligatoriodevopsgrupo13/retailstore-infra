@@ -39,6 +39,12 @@ variable "cluster_name" {
   type        = string
 }
 
+variable "image_tag" {
+  description = "Tag de la imagen Docker a desplegar en ECS"
+  type        = string
+  default     = "latest"
+}
+
 variable "service_names" {
   description = "Nombres base de los microservicios con repositorio ECR"
   type        = list(string)
