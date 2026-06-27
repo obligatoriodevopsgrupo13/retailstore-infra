@@ -40,3 +40,30 @@ module "ecs_service" {
   image_tag          = var.image_tag
   execution_role_arn = data.aws_iam_role.labrole.arn
 }
+
+module "observability" {
+  source = "../../modules/observability"
+
+  app_name     = "retailstore"
+  environment  = var.environment
+  aws_region   = var.aws_region
+  cluster_name = var.cluster_name
+
+  alarm_email = var.alarm_email
+
+  cpu_threshold             = var.obs_cpu_threshold
+  memory_threshold          = var.obs_memory_threshold
+  error_5xx_threshold       = var.obs_error_5xx_threshold
+  response_time_threshold   = var.obs_response_time_threshold
+  unhealthy_hosts_threshold = var.obs_unhealthy_hosts_threshold
+
+  critical_services = ["retail-checkout", "retail-orders", "retail-cart"]
+
+  services = {
+    for name in var.service_names : name => {
+      alb_arn          = module.ecs_service[name].alb_arn
+      target_group_arn = module.ecs_service[name].target_group_arn
+      service_name     = module.ecs_service[name].service_name
+    }
+  }
+}
