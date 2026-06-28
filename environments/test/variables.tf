@@ -57,3 +57,34 @@ variable "service_names" {
     "retail-orders"
   ]
 }
+
+variable "alarm_email" {
+  description = "Email para notificaciones de alarmas CloudWatch"
+  type        = string
+  default     = ""
+}
+
+variable "obs_cpu_threshold" {
+  type    = number
+  default = 80
+}
+
+variable "obs_memory_threshold" {
+  type    = number
+  default = 80
+}
+
+variable "obs_error_5xx_threshold" {
+  type    = number
+  default = 10
+}
+
+variable "obs_response_time_threshold" {
+  type    = number
+  default = 2
+}
+
+variable "obs_unhealthy_hosts_threshold" {
+  type    = number
+  default = 1
+}

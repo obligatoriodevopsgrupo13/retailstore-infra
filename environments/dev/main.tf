@@ -139,3 +139,44 @@ module "ui_service" {
     { name = "RETAIL_UI_ENDPOINTS_ORDERS", value = "http://${module.ecs_service["retail-orders"].alb_dns_name}" },
   ]
 }
+
+module "observability" {
+  source = "../../modules/observability"
+
+  app_name     = "retailstore"
+  environment  = var.environment
+  aws_region   = var.aws_region
+  cluster_name = var.cluster_name
+
+  alarm_email = var.alarm_email
+
+  cpu_threshold             = var.obs_cpu_threshold
+  memory_threshold          = var.obs_memory_threshold
+  error_5xx_threshold       = var.obs_error_5xx_threshold
+  response_time_threshold   = var.obs_response_time_threshold
+  unhealthy_hosts_threshold = var.obs_unhealthy_hosts_threshold
+
+  critical_services = ["retail-checkout", "retail-orders", "retail-cart"]
+
+  services = merge(
+    {
+      for name, svc in module.ecs_service : name => {
+        alb_arn          = svc.alb_arn
+        target_group_arn = svc.target_group_arn
+        service_name     = svc.service_name
+      }
+    },
+    {
+      "retail-checkout" = {
+        alb_arn          = module.checkout_service.alb_arn
+        target_group_arn = module.checkout_service.target_group_arn
+        service_name     = module.checkout_service.service_name
+      }
+      "retail-ui" = {
+        alb_arn          = module.ui_service.alb_arn
+        target_group_arn = module.ui_service.target_group_arn
+        service_name     = module.ui_service.service_name
+      }
+    }
+  )
+}

@@ -87,3 +87,39 @@ variable "admin_jwt_secret" {
   type        = string
   sensitive   = true
 }
+
+variable "alarm_email" {
+  description = "Email para notificaciones de alarmas CloudWatch"
+  type        = string
+  default     = ""
+}
+
+variable "obs_cpu_threshold" {
+  description = "% de CPU para disparar alarma ECS"
+  type        = number
+  default     = 80
+}
+
+variable "obs_memory_threshold" {
+  description = "% de memoria para disparar alarma ECS"
+  type        = number
+  default     = 80
+}
+
+variable "obs_error_5xx_threshold" {
+  description = "Cantidad de errores 5XX en 5 minutos para disparar alarma ALB"
+  type        = number
+  default     = 10
+}
+
+variable "obs_response_time_threshold" {
+  description = "Tiempo de respuesta promedio en segundos para disparar alarma ALB"
+  type        = number
+  default     = 2
+}
+
+variable "obs_unhealthy_hosts_threshold" {
+  description = "Cantidad de hosts no saludables para disparar alarma ALB"
+  type        = number
+  default     = 1
+}
