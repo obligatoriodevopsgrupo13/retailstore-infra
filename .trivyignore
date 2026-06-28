@@ -1,0 +1,10 @@
+# Excepción aceptada temporalmente para el laboratorio:
+# Los ALB están expuestos por HTTP porque todavía no se configuró ACM/dominio/HTTPS.
+# Deuda técnica: implementar HTTPS en ALB con certificado ACM.
+AWS-0054 exp:2026-08-31
+
+# Excepción aceptada temporalmente para el laboratorio:
+# Los security groups mantienen egress abierto para permitir conectividad externa
+# de ECS/RDS mientras se estabiliza la arquitectura.
+# Deuda técnica: restringir egress a destinos necesarios.
+AWS-0104 exp:2026-08-31
