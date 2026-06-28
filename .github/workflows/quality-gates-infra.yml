@@ -17,6 +17,28 @@ permissions:
   security-events: write
 
 jobs:
+  sonar-infra-analysis:
+    name: Sonar Infra Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate SONAR_TOKEN exists
+        run: |
+          if [ -z "${{ secrets.SONAR_TOKEN }}" ]; then
+            echo "ERROR: Falta configurar el secret SONAR_TOKEN en GitHub Actions."
+            exit 1
+          fi
+
+      - name: Run SonarQube Cloud Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
   terraform-format-validate:
     name: Terraform Format and Validate
     runs-on: ubuntu-latest
