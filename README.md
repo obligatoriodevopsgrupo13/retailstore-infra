@@ -19,6 +19,18 @@ Configurar credenciales con una sesión activa:
 aws configure
 ```
 
+### Secretos de Terraform
+
+Antes del primer `terraform apply`:
+
+```bash
+cd environments/dev
+cp secrets.auto.tfvars.example secrets.auto.tfvars
+# Editar secrets.auto.tfvars con contraseñas reales
+```
+
+En CI/CD, configurar los GitHub Secrets `TF_DB_PASSWORD`, `TF_ADMIN_PASSWORD`, `TF_ADMIN_JWT_SECRET`.
+
 ## Despliegue local
 
 ### 1. Crear bucket de Terraform state
@@ -36,9 +48,12 @@ Región: `us-east-1`.
 ```bash
 cd environments/dev
 
+cp secrets.auto.tfvars.example secrets.auto.tfvars   # solo la primera vez
+# completar secretos en secrets.auto.tfvars
+
 terraform init
-terraform plan -var-file="terraform.tfvars"
-terraform apply -var-file="terraform.tfvars"
+terraform plan
+terraform apply
 ```
 
 Infra desplegada por Terraform (dev)
