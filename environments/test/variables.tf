@@ -58,6 +58,36 @@ variable "service_names" {
   ]
 }
 
+variable "db_username" {
+  description = "Usuario maestro de la base de datos PostgreSQL"
+  type        = string
+  default     = "retail_user"
+}
+
+variable "db_password" {
+  description = "Password del usuario maestro de PostgreSQL"
+  type        = string
+  sensitive   = true
+}
+
+variable "admin_username" {
+  description = "Usuario del panel de administracion"
+  type        = string
+  default     = "admin"
+}
+
+variable "admin_password" {
+  description = "Password del panel de administracion"
+  type        = string
+  sensitive   = true
+}
+
+variable "admin_jwt_secret" {
+  description = "Secreto JWT del servicio admin"
+  type        = string
+  sensitive   = true
+}
+
 variable "alarm_email" {
   description = "Email para notificaciones de alarmas CloudWatch"
   type        = string
@@ -65,26 +95,31 @@ variable "alarm_email" {
 }
 
 variable "obs_cpu_threshold" {
-  type    = number
-  default = 80
+  description = "% de CPU para disparar alarma ECS"
+  type        = number
+  default     = 80
 }
 
 variable "obs_memory_threshold" {
-  type    = number
-  default = 80
+  description = "% de memoria para disparar alarma ECS"
+  type        = number
+  default     = 80
 }
 
 variable "obs_error_5xx_threshold" {
-  type    = number
-  default = 10
+  description = "Cantidad de errores 5XX en 5 minutos para disparar alarma ALB"
+  type        = number
+  default     = 10
 }
 
 variable "obs_response_time_threshold" {
-  type    = number
-  default = 2
+  description = "Tiempo de respuesta promedio en segundos para disparar alarma ALB"
+  type        = number
+  default     = 2
 }
 
 variable "obs_unhealthy_hosts_threshold" {
-  type    = number
-  default = 1
+  description = "Cantidad de hosts no saludables para disparar alarma ALB"
+  type        = number
+  default     = 1
 }
