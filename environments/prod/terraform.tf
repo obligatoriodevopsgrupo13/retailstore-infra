@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     # Completar con el bucket remoto antes de ejecutar terraform init.
-    bucket  = "obligatorio-devops-tfstate-13 "
+    bucket  = "obligatorio-devops-tfstate-13"
     key     = "prod/terraform.tfstate"
     region  = "us-east-1"
     encrypt = true
