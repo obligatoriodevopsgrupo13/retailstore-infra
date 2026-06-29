@@ -28,8 +28,16 @@ output "ecr_repository_urls" {
 
 output "alb_dns_names" {
   description = "DNS publicos de los ALBs por microservicio en prod"
-  value = {
-    for service_name, service in module.ecs_service :
-    service_name => service.alb_dns_name
-  }
+  value = merge(
+    { for service_name, service in module.ecs_service : service_name => service.alb_dns_name },
+    {
+      "retail-checkout" = module.checkout_service.alb_dns_name
+      "retail-ui"       = module.ui_service.alb_dns_name
+    }
+  )
+}
+
+output "rds_endpoint" {
+  description = "Endpoint de la instancia RDS PostgreSQL (host:puerto) para conectarse con un cliente SQL"
+  value       = module.rds.endpoint
 }

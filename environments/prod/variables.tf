@@ -58,6 +58,36 @@ variable "service_names" {
   ]
 }
 
+variable "db_username" {
+  description = "Usuario maestro de la base de datos PostgreSQL"
+  type        = string
+  default     = "retail_user"
+}
+
+variable "db_password" {
+  description = "Password del usuario maestro de PostgreSQL"
+  type        = string
+  sensitive   = true
+}
+
+variable "admin_username" {
+  description = "Usuario del panel de administracion"
+  type        = string
+  default     = "admin"
+}
+
+variable "admin_password" {
+  description = "Password del panel de administracion"
+  type        = string
+  sensitive   = true
+}
+
+variable "admin_jwt_secret" {
+  description = "Secreto JWT del servicio admin"
+  type        = string
+  sensitive   = true
+}
+
 variable "alarm_email" {
   description = "Email para notificaciones de alarmas CloudWatch"
   type        = string
