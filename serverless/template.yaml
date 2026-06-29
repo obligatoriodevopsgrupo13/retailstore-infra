@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+
+Description: Monitoreo de salud de los servicios ECS
+
+Globals:
+  Function:
+    Runtime: nodejs20.x
+    Timeout: 60
+    Environment:
+      Variables:
+        ENVIRONMENT: !Ref Environment
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, test, prod]
+
+  ClusterName:
+    Type: String
+    Description: Nombre del cluster ECS a monitorear
+
+Resources:
+  AlertsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub "retail-alerts-${Environment}"
+
+  EcsHealthMonitor:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "ecs-health-monitor-${Environment}"
+      CodeUri: src/ecs_health_monitor/
+      Handler: handler.handler
+      Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LabRole"
+      Environment:
+        Variables:
+          CLUSTER_NAME: !Ref ClusterName
+          SNS_TOPIC_ARN: !Ref AlertsTopic
+      Events:
+        ScheduledCheck:
+          Type: Schedule
+          Properties:
+            Schedule: rate(5 minutes)
+            Enabled: true
+
+Outputs:
+  AlertsTopicArn:
+    Description: ARN del SNS topic de alertas
+    Value: !Ref AlertsTopic
